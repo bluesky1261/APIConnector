@@ -11,6 +11,7 @@ import Alamofire
 public protocol APIResource {
     associatedtype DecodableErrorType: APIConnectorErrorDecodable
     
+    var headers: HTTPHeaders? { get }
     var baseURL: URL { get }
     var endpoint: String { get }
     var httpMethod: HTTPMethod { get }
