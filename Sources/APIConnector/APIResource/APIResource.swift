@@ -20,7 +20,7 @@ public protocol APIResource {
 }
 
 extension APIResource {
-    func decodeError(data: Data) throws -> DecodableErrorType {
+    func decodeError(data: Data) throws -> APIConnectorErrorDecodable {
         let decoder = JSONDecoder()
         return try decoder.decode(DecodableErrorType.self, from: data)
     }

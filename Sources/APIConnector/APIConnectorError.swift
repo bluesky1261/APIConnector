@@ -19,7 +19,8 @@ enum APIConnectorError: Error {
     case decode(Error)
     case noData
     case noResponse
-    case unreached
+    case unAuthorized
+    case timeout
     case unknown(AFError)
 }
 
@@ -35,8 +36,10 @@ extension APIConnectorError: LocalizedError {
             return "서버에서 전송된 데이터가 없습니다."
         case .noResponse:
             return "서버 응답 데이터가 존재하지 않습니다."
-        case .unreached:
-            return "서버 통신에 실패하였습니다. 네트워크 상태를 확인바랍니다."
+        case .unAuthorized:
+            return "서버 데이터 접근 권한이 부족합니다."
+        case .timeout:
+            return "서버 통신시 Timeout이 발생하였습니다. 네트워크 상태를 확인바랍니다."
         case let .unknown(error):
             return "알 수 없는 에러 발생. 메세지: \(error.localizedDescription)"
         }
