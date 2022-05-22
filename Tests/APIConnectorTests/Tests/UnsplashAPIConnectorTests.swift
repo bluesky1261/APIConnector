@@ -4,7 +4,6 @@ import Alamofire
 
 final class UnsplashAPIConnectorTests: XCTestCase {
     let apiConnector = APIConnector.shared
-    let clientID = "hb2G6bTs1Jr0gChHCR6-HOUnQt-58aNqZo4wD4mXQVw"
     
     override func setUpWithError() throws {
     }
@@ -15,15 +14,12 @@ final class UnsplashAPIConnectorTests: XCTestCase {
     func test_테스트성공() async throws {
         // Given
         let request = TopicModel.Request(page: 1)
-        var headers = HTTPHeaders()
-        headers.add(name: "Authorization", value: "Client-ID ".appending(clientID))
         
         // When
         let response = try await apiConnector.request(resource: UnsplashAPIResouces.topic,
                                                       parameters: request,
                                                       responseModel: [TopicModel.Response].self,
-                                                      encoder: .urlEncodedForm,
-                                                      additionalHeader: headers)
+                                                      encoder: .urlEncodedForm)
         
         // Then
         XCTAssertTrue(response.count > 0)
@@ -75,5 +71,22 @@ final class UnsplashAPIConnectorTests: XCTestCase {
                 return
             }
         })
+    }
+    
+    func test_인증에러_재처리성공() async throws {
+        // Given
+        let unsplashInterceptor = UnsplashInterceptor(targetRetryCount: 1)
+        let unsplashApiconnector = APIConnector(interceptor: unsplashInterceptor)
+    
+        let request = TopicModel.Request(page: 1)
+        
+        // When
+        let response = try await unsplashApiconnector.request(resource: UnsplashAPIResouces.invalidAuthorization,
+                                                              parameters: request,
+                                                              responseModel: [TopicModel.Response].self,
+                                                              encoder: .urlEncodedForm)
+        // Then
+        XCTAssertEqual(unsplashInterceptor.retryCount, 1)
+        XCTAssertTrue(response.count > 0)
     }
 }
