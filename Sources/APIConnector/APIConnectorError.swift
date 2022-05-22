@@ -14,7 +14,7 @@ public protocol APIConnectorErrorDecodable: Error & Decodable {
 }
 
 // MARK: - APIConnectorError
-enum APIConnectorError: Error {
+public enum APIConnectorError: Error {
     case http(APIConnectorErrorDecodable, HTTPURLResponse)
     case decode(Error)
     case noData

@@ -9,11 +9,13 @@ public struct APIConnector {
     public private(set) var session: Session
     public static let shared: APIConnector = APIConnector()
 
+    
     /// APIConnector Initializer
-    public init(configuration: URLSessionConfiguration? = nil) {
+    public init(configuration: URLSessionConfiguration? = nil,
+                interceptor: RequestInterceptor? = nil,
+                eventMonitors: [EventMonitor] = []) {
         if let configuration = configuration {
             self.configuration = configuration
-            self.session = Session(configuration: configuration)
         } else {
             self.configuration = URLSessionConfiguration.default
             self.configuration.headers = [
@@ -21,9 +23,9 @@ public struct APIConnector {
                 .defaultAcceptLanguage,
                 .defaultUserAgent
             ]
-            
-            self.session = Session(configuration: self.configuration)
         }
+        
+        self.session = Session(configuration: self.configuration, interceptor: interceptor, eventMonitors: eventMonitors)
     }
     
     public func request<Resource, Request, Response>(resource: Resource,
