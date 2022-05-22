@@ -13,11 +13,13 @@ extension DataTask {
     func value<Resource>(resource: Resource, statusCode: Range<Int> = (200..<400)) async throws -> Value where Resource: APIResource {
         let response = await self.response
         
-        if let error = response.error, error.isSessionTaskError {
-            if (error as NSError).code == NSURLErrorTimedOut {
+        if let error = response.error {
+            if error.isSessionTaskError, (error as NSError).code == NSURLErrorTimedOut {
                 throw APIConnectorError.timeout
-            } else {
-                throw APIConnectorError.unknown(error)
+            } else if error.isResponseSerializationError {
+                throw APIConnectorError.decode(error)
+            } else if error.isResponseValidationError {
+                throw APIConnectorError.unAuthorized
             }
         }
         
@@ -30,10 +32,6 @@ extension DataTask {
         }
         
         guard statusCode.contains(urlResponse.statusCode) else {
-            if urlResponse.statusCode == 401 {
-                throw APIConnectorError.unAuthorized
-            }
-            
             var decodedError: APIConnectorErrorDecodable?
             do {
                 decodedError = try resource.decodeError(data: data)
@@ -44,7 +42,7 @@ extension DataTask {
             guard let decodedError = decodedError else {
                 throw APIConnectorError.unknown()
             }
-            throw APIConnectorError.decode(decodedError)
+            throw APIConnectorError.http(decodedError, urlResponse)
         }
         
         return try await value
