@@ -21,7 +21,7 @@ enum APIConnectorError: Error {
     case noResponse
     case unAuthorized
     case timeout
-    case unknown(AFError)
+    case unknown(AFError? = nil)
 }
 
 // MARK: - Extension: LocalizedError
@@ -41,7 +41,7 @@ extension APIConnectorError: LocalizedError {
         case .timeout:
             return "서버 통신시 Timeout이 발생하였습니다. 네트워크 상태를 확인바랍니다."
         case let .unknown(error):
-            return "알 수 없는 에러 발생. 메세지: \(error.localizedDescription)"
+            return "알 수 없는 에러 발생. 메세지: \(error?.localizedDescription ?? "")"
         }
     }
 }
