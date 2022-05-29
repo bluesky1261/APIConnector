@@ -26,10 +26,13 @@ extension APIConnector {
                 if let error = response.error {
                     if error.isSessionTaskError, (error as NSError).code == NSURLErrorTimedOut {
                         completion(.failure(.timeout))
+                        return
                     } else if error.isResponseSerializationError {
                         completion(.failure(.decode(error)))
+                        return
                     } else if error.isResponseValidationError {
                         completion(.failure(.unAuthorized))
+                        return
                     }
                 }
                 

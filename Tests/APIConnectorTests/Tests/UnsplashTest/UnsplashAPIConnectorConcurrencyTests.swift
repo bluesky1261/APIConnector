@@ -1,8 +1,15 @@
+//
+//  UnsplashAPIConnectorConcurrencyTests.swift
+//  
+//
+//  Created by Joonghoo Im on 2022/05/29.
+//
+
 import XCTest
 import Alamofire
 @testable import APIConnector
 
-final class UnsplashAPIConnectorTests: XCTestCase {
+final class UnsplashAPIConnectorConcurrencyTests: XCTestCase {
     let apiConnector = APIConnector.shared
     
     override func setUpWithError() throws {
@@ -11,7 +18,7 @@ final class UnsplashAPIConnectorTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
-    func test_테스트성공() async throws {
+    func test_Concurrency_테스트성공() async throws {
         // Given
         let request = TopicModel.Request(page: 1)
         
@@ -25,7 +32,7 @@ final class UnsplashAPIConnectorTests: XCTestCase {
         XCTAssertTrue(response.count > 0)
     }
     
-    func test_인증에러() async throws {
+    func test_Concurrency_인증에러() async throws {
         // Given
         let request = TopicModel.Request(page: 1)
         
@@ -37,20 +44,20 @@ final class UnsplashAPIConnectorTests: XCTestCase {
                                                                   encoder: .urlEncodedForm),
                                    "인증 에러 발생",
                                    { error in
-            guard let apiClientError = error as? APIConnectorError else {
+            guard let apiConnectorError = error as? APIConnectorError else {
                 XCTAssert(false, "APIConnector Error 미발생.")
                 return
             }
             
-            guard case .unAuthorized = apiClientError else {
-                XCTAssert(false, "인증 에러가가 아닌 다음 에러 발생. 에러: \(apiClientError.errorDescription ?? "")")
+            guard case .unAuthorized = apiConnectorError else {
+                XCTAssert(false, "인증 에러가 아닌 다음 에러 발생. 에러: \(apiConnectorError.errorDescription ?? "")")
                 return
             }
         })
     }
     
     
-    func test_디코딩에러() async throws {
+    func test_Concurrency_디코딩에러() async throws {
         let request = TopicModel.Request(page: 1)
         
         // When
@@ -61,19 +68,19 @@ final class UnsplashAPIConnectorTests: XCTestCase {
                                                                   encoder: .urlEncodedForm),
                                    "디코딩 에러 발생",
                                    { error in
-            guard let apiClientError = error as? APIConnectorError else {
+            guard let apiConnectorError = error as? APIConnectorError else {
                 XCTAssert(false, "APIConnector Error 미발생.")
                 return
             }
             
-            guard case .decode = apiClientError else {
-                XCTAssert(false, "디코딩 에러가 아닌 다음 에러 발생, 에러: \(apiClientError.errorDescription ?? "")")
+            guard case .decode = apiConnectorError else {
+                XCTAssert(false, "디코딩 에러가 아닌 다음 에러 발생. 에러: \(apiConnectorError.errorDescription ?? "")")
                 return
             }
         })
     }
     
-    func test_인증에러_재처리성공() async throws {
+    func test_Concurrency_인증에러_재처리성공() async throws {
         // Given
         let unsplashInterceptor = UnsplashInterceptor(targetRetryCount: 1)
         let unsplashApiconnector = APIConnector(interceptor: unsplashInterceptor)
