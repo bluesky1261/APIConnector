@@ -3,12 +3,11 @@ import Alamofire
 
 public struct APIConnector {
     private let configuration: URLSessionConfiguration
-    private(set) var validStatusCode: Range<Int> = 200..<400
+    static let validStatusCode: Range<Int> = 200..<400
     
     // MARK: - Public Variables
     public private(set) var session: Session
     public static let shared: APIConnector = APIConnector()
-
     
     /// APIConnector Initializer
     public init(configuration: URLSessionConfiguration? = nil,

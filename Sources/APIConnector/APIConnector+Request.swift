@@ -48,7 +48,7 @@ extension APIConnector {
                     return
                 }
                 
-                guard self.validStatusCode.contains(urlResponse.statusCode) else {
+                guard APIConnector.validStatusCode.contains(urlResponse.statusCode) else {
                     do {
                         let decodedError: APIConnectorErrorDecodable = try resource.decodeError(data: data)
                         completion(.failure(.http(decodedError, urlResponse)))
