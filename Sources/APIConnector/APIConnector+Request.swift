@@ -27,8 +27,10 @@ extension APIConnector {
                     if error.isSessionTaskError, (error as NSError).code == NSURLErrorTimedOut {
                         completion(.failure(.timeout))
                         return
-                    } else if error.isResponseSerializationError {
-                        completion(.failure(.decode(error)))
+                    } else if case let AFError.responseSerializationFailed(reason: reason) = error,
+                              case let AFError.ResponseSerializationFailureReason.decodingFailed(error: decodingError) = reason,
+                              let decodingError = decodingError as? Swift.DecodingError {
+                        completion(.failure(.decode(decodingError)))
                         return
                     } else if error.isResponseValidationError {
                         completion(.failure(.unAuthorized))
@@ -51,7 +53,11 @@ extension APIConnector {
                         let decodedError: APIConnectorErrorDecodable = try resource.decodeError(data: data)
                         completion(.failure(.http(decodedError, urlResponse)))
                     } catch let error {
-                        completion(.failure(.decode(error)))
+                        if let decodingError = error as? Swift.DecodingError {
+                            completion(.failure(.decode(decodingError)))
+                        } else {
+                            completion(.failure(.decode(nil)))
+                        }
                     }
                     return
                 }

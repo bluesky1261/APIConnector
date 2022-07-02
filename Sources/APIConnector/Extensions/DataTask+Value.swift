@@ -16,8 +16,10 @@ extension DataTask {
         if let error = response.error {
             if error.isSessionTaskError, (error as NSError).code == NSURLErrorTimedOut {
                 throw APIConnectorError.timeout
-            } else if error.isResponseSerializationError {
-                throw APIConnectorError.decode(error)
+            } else if case let AFError.responseSerializationFailed(reason: reason) = error,
+                      case let AFError.ResponseSerializationFailureReason.decodingFailed(error: decodingFailedError) = reason,
+                      let decodingError = decodingFailedError as? Swift.DecodingError {
+                throw APIConnectorError.decode(decodingError)
             } else if error.isResponseValidationError {
                 throw APIConnectorError.unAuthorized
             }
@@ -36,7 +38,11 @@ extension DataTask {
             do {
                 decodedError = try resource.decodeError(data: data)
             } catch let error {
-                throw APIConnectorError.decode(error)
+                if let decodingError = error as? Swift.DecodingError {
+                    throw APIConnectorError.decode(decodingError)
+                } else {
+                    throw APIConnectorError.decode(nil)
+                }
             }
             
             guard let decodedError = decodedError else {

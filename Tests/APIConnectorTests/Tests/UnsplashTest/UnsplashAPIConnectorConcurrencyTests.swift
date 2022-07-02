@@ -77,6 +77,8 @@ final class UnsplashAPIConnectorConcurrencyTests: XCTestCase {
                 XCTAssert(false, "디코딩 에러가 아닌 다음 에러 발생. 에러: \(apiConnectorError.errorDescription ?? "")")
                 return
             }
+            
+            XCTAssertEqual("Decoding시 키를 찾을 수 없습니다. 키: CodingKeys(stringValue: \"page\", intValue: nil), CodingPath: [_JSONKey(stringValue: \"Index 0\", intValue: 0)], 에러 내용: No value associated with key CodingKeys(stringValue: \"page\", intValue: nil) (\"page\").", apiConnectorError.errorDescription)
         })
     }
     
