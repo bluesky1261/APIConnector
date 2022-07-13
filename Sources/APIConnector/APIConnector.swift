@@ -1,6 +1,9 @@
 import Foundation
 import Alamofire
 
+// TODO: Download, Upload 구현, Test 코드 구현
+// TODO: retriableStatusCode 분리하기
+// TODO: Get, Post 대응 ParameterEncoder
 public struct APIConnector {
     private let configuration: URLSessionConfiguration
     static let validStatusCode: Range<Int> = 200..<400
