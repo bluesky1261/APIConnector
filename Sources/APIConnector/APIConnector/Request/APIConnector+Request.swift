@@ -10,7 +10,7 @@ import Combine
 
 // MARK: - Request + Combine
 extension APIConnector {
-    func request<Model, Parameters>(resource: any APIResource,
+    public func request<Model, Parameters>(resource: any APIResource,
                                     model: Model.Type,
                                     parameters: Parameters,
                                     encoder: ParameterEncoder = JSONParameterEncoder.default) -> AnyPublisher<Model, Error> where Model: Decodable, Parameters: Encodable {
@@ -22,7 +22,7 @@ extension APIConnector {
         .eraseToAnyPublisher()
     }
     
-    func request<Model>(resource: any APIResource,
+    public func request<Model>(resource: any APIResource,
                         model: Model.Type,
                         encoder: ParameterEncoder = JSONParameterEncoder.default) -> AnyPublisher<Model, Error> where Model: Decodable {
         let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
