@@ -7,9 +7,9 @@
 
 import Foundation
 import Alamofire
-
+/*
 extension APIConnector {
-    func download<Parameters>(resource: APIResource,
+    func download<Parameters>(resource: any APIResource,
                               parameters: Parameters,
                               encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> URL where Parameters: Encodable {
         
@@ -26,7 +26,7 @@ extension APIConnector {
         
     }
 }
-
+*/
 /*
  //
  //  APIClient+Download+Concurrency.swift

@@ -9,19 +9,10 @@ import Foundation
 import Alamofire
 
 public protocol APIResource {
-    associatedtype DecodableErrorType: APIConnectorErrorDecodable
-    
-    var headers: HTTPHeaders? { get }
     var baseURL: URL { get }
     var endpoint: String { get }
     var httpMethod: HTTPMethod { get }
+    var additionalHeaders: HTTPHeaders? { get }
     
-    func decodeError(data: Data) throws -> DecodableErrorType
-}
-
-extension APIResource {
-    func decodeError(data: Data) throws -> APIConnectorErrorDecodable {
-        let decoder = JSONDecoder()
-        return try decoder.decode(DecodableErrorType.self, from: data)
-    }
+    func decodeError(data: Data) throws -> APIErrorDecodable
 }

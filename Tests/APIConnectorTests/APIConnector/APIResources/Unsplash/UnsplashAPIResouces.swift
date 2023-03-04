@@ -10,22 +10,10 @@ import APIConnector
 import Alamofire
 
 enum UnsplashAPIResouces: APIResource {
-    typealias DecodableErrorType = UnsplashAPIResouces.DecodableError
-    
     case topic
     case photo
     case invalidAuthorization
     case invalidEndpoint
-    
-    var headers: HTTPHeaders? {
-        switch self {
-        case .invalidAuthorization:
-            return nil
-        default:
-            let httpHeaders = HTTPHeaders(["Authorization" : "Client-ID hb2G6bTs1Jr0gChHCR6-HOUnQt-58aNqZo4wD4mXQVw"])
-            return httpHeaders
-        }
-    }
     
     var baseURL: URL {
         return URL(string: "https://api.unsplash.com")!
@@ -57,13 +45,24 @@ enum UnsplashAPIResouces: APIResource {
         }
     }
     
-    func decodeError(data: Data) throws -> DecodableError {
-        return try decodeError(data: data)
+    var additionalHeaders: HTTPHeaders? {
+        switch self {
+        case .invalidAuthorization:
+            return nil
+        default:
+            let httpHeaders = HTTPHeaders(["Authorization" : "Client-ID hb2G6bTs1Jr0gChHCR6-HOUnQt-58aNqZo4wD4mXQVw"])
+            return httpHeaders
+        }
+    }
+    
+    func decodeError(data: Data) throws -> APIErrorDecodable {
+        let decoder = JSONDecoder()
+        return try decoder.decode(UnsplashAPIResouces.DecodableError.self, from: data)
     }
 }
 
 extension UnsplashAPIResouces {
-    struct DecodableError: APIConnectorErrorDecodable {
+    struct DecodableError: APIErrorDecodable {
         let errors: [String]
         
         var errorMessage: String? {
