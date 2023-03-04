@@ -18,9 +18,9 @@ public final class APIConnector {
     var headers: HTTPHeaders = HTTPHeaders()
     
     /// Custom APIClient 설정을 사용하는 Initializer. Configuration, Interceptor, Validator를 모두 커스텀 구현하도록 강제함.
-    init(configuration: APIConnectorConfigurable,
-         interceptor: any APIConnectorInterceptor,
-         validator: APIConnectorValidator) {
+    public init(configuration: APIConnectorConfigurable,
+                interceptor: any APIConnectorInterceptor,
+                validator: APIConnectorValidator) {
         configuration.sessionConfiguration.headers = configuration.headers
         configuration.sessionConfiguration.waitsForConnectivity = true
         configuration.sessionConfiguration.urlCache = URLCache(memoryCapacity: configuration.cacheMemCapacity,
@@ -45,7 +45,7 @@ public final class APIConnector {
     }
     
     /// 기본 APIClient 설정을 사용하는 Initializer
-    convenience init() {
+    public convenience init() {
         let configuration = APIConnectorConfig()
         let interceptor = APIClientInterceptorImpl()
         let validator = APIConnectorValidatorImpl()
@@ -79,7 +79,7 @@ extension APIConnector {
         } else {
             headerForRequest = self.headers
         }
-
+        
         return headerForRequest
     }
 }
