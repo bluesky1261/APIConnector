@@ -9,13 +9,13 @@ import Foundation
 import Alamofire
 
 public final class APIConnector {
-    private(set) var session: Session
+    private(set) public var session: Session
     
-    var configuration: APIConnectorConfigurable
-    var interceptor: RequestInterceptor
-    var validator: APIConnectorValidator
+    public var configuration: APIConnectorConfigurable
+    public var interceptor: RequestInterceptor
+    public var validator: APIConnectorValidator
     
-    var headers: HTTPHeaders = HTTPHeaders()
+    public var headers: HTTPHeaders = HTTPHeaders()
     
     /// Custom APIClient 설정을 사용하는 Initializer. Configuration, Interceptor, Validator를 모두 커스텀 구현하도록 강제함.
     public init(configuration: APIConnectorConfigurable,
@@ -35,9 +35,9 @@ public final class APIConnector {
         self.interceptor = interceptor
         self.validator = validator
         var eventMonitors = [EventMonitor]()
-#if !PROD && DEV
-        let logMonitor = APIClientMonitor(configuration: configuration, logger: APIClientLoggerImpl())
-        eventMonitors.append(logMonitor)
+#if DEBUG
+        //let logMonitor = APIClientMonitor(configuration: configuration, logger: APIClientLoggerImpl())
+        //eventMonitors.append(logMonitor)
 #endif
         self.session = Session(configuration: configuration.sessionConfiguration,
                                interceptor: interceptor,
