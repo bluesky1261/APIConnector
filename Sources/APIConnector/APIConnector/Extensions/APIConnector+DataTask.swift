@@ -9,7 +9,7 @@ import Alamofire
 import Foundation
 
 extension DataTask {
-    func value(_ resource: any APIResource,
+    func value(_ resource: APIResource,
                statusCode: Range<Int>) async throws -> Value {
         let dataResponse = await response
         
@@ -20,6 +20,8 @@ extension DataTask {
                 throw APIConnectorError.unreached
             } else if error.isResponseValidationError {
                 throw APIConnectorError.unAuthorized
+            } else if error.isExplicitlyCancelledError {
+                throw APIConnectorError.canceledByUser
             }
         }
         
