@@ -11,9 +11,8 @@ let package = Package(
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "APIConnector",
-            targets: ["APIConnector"]),
+        .library(name: "APIConnector", targets: ["APIConnector"]),
+        .library(name: "APIConnector-Dynamic", type: .dynamic, targets: ["APIConnector"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.0.0"))
