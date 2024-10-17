@@ -18,10 +18,12 @@ public enum APIConnectorError: Error {
     case http(APIErrorDecodable, HTTPURLResponse)
     case decode(Swift.DecodingError?)
     case noData
+    case emptyUrl
     case unreached
     case unAuthorized
     case urlResponse(AFError?)
     case initialize
+    case canceledByUser
     case noValue
     case unknown(AFError)
 }
@@ -48,6 +50,8 @@ extension APIConnectorError: LocalizedError {
 
         case .noData:
             return "서버에서 전송된 데이터가 없습니다."
+        case .emptyUrl:
+            return "파일 다운로드 / 업로드시 수신된 Url이 존재하지 않습니다."
         case .unreached:
             return "서버 통신에 실패하였습니다. 네트워크 상태를 확인바랍니다."
         case .unAuthorized:
@@ -56,6 +60,8 @@ extension APIConnectorError: LocalizedError {
             return "URL Response에서 에러가 발생하였습니다. 메세지: \(error?.localizedDescription ?? "없음.")"
         case .initialize:
             return "통신 초기화시 에러가 발생하였습니다. 요청 정보를 확인해주세요."
+        case .canceledByUser:
+            return "사용자에 의해 요청이 취소되었습니다."
         case .noValue:
             return "디코딩된 최종 결과 데이터가 존재하지 않습니다."
         case let .unknown(error):

@@ -10,7 +10,7 @@ import Alamofire
 
 // MARK: - APIConnector + Request
 extension APIConnector {
-    public func request<Model, Parameters>(resource: any APIResource,
+    public func request<Model, Parameters>(resource: APIResource,
                                     model: Model.Type,
                                     parameters: Parameters,
                                     encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable, Parameters: Encodable {
@@ -21,7 +21,7 @@ extension APIConnector {
         .value(resource, statusCode: configuration.validStatusCode)
     }
     
-    public func request<Model>(resource: any APIResource,
+    public func request<Model>(resource: APIResource,
                         model: Model.Type,
                         encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable {
         let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
@@ -35,7 +35,7 @@ extension APIConnector {
 
 // MARK: APIConnector + serializing
 extension APIConnector {
-    fileprivate func serializing<Model, Parameters>(resource: any APIResource,
+    fileprivate func serializing<Model, Parameters>(resource: APIResource,
                                                     model: Model.Type,
                                                     parameters: Parameters?,
                                                     encoder: ParameterEncoder = JSONParameterEncoder.default) -> DataTask<Model> where Model: Decodable, Parameters: Encodable {

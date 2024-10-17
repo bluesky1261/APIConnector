@@ -11,13 +11,13 @@ import Foundation
 public protocol APIConnectorValidator {
     /// Validate for Request
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                data: Data?) -> DataRequest.ValidationResult where S.Iterator.Element == Int
     /// Validate for Download
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int
@@ -26,7 +26,7 @@ public protocol APIConnectorValidator {
 // MARK: - APIClientValidatorImpl
 final class APIConnectorValidatorImpl: APIConnectorValidator {
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                data: Data?) -> DataRequest.ValidationResult where S.Iterator.Element == Int {
@@ -41,7 +41,7 @@ final class APIConnectorValidatorImpl: APIConnectorValidator {
     }
     
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int {
@@ -59,7 +59,7 @@ final class APIConnectorValidatorImpl: APIConnectorValidator {
 // MARK: - DataRequest
 extension DataRequest {
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                validator: APIConnectorValidator) -> Self where S.Iterator.Element == Int {
         validate { request, response, data in
             validator.validate(retriableStatusCode: retriableStatusCode, resource: resource, request: request, response: response, data: data)
@@ -70,7 +70,7 @@ extension DataRequest {
 // MARK: - DownloadRequest
 extension DownloadRequest {
     func validate<S: Sequence>(retriableStatusCode: S,
-                               resource: any APIResource,
+                               resource: APIResource,
                                validator: APIConnectorValidator) -> Self where S.Iterator.Element == Int {
         validate { request, response, fileUrl in
             validator.validate(retriableStatusCode: retriableStatusCode, resource: resource, request: request, response: response, fileUrl: fileUrl)

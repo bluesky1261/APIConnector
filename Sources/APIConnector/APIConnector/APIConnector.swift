@@ -20,7 +20,8 @@ public final class APIConnector {
     /// Custom APIClient 설정을 사용하는 Initializer. Configuration, Interceptor, Validator를 모두 커스텀 구현하도록 강제함.
     public init(configuration: APIConnectorConfigurable,
                 interceptor: any APIConnectorInterceptor,
-                validator: APIConnectorValidator) {
+                validator: APIConnectorValidator,
+                eventLogger: APIConnectorLogger & EventMonitor) {
         configuration.sessionConfiguration.headers = configuration.headers
         configuration.sessionConfiguration.waitsForConnectivity = true
         configuration.sessionConfiguration.urlCache = URLCache(memoryCapacity: configuration.cacheMemCapacity,
@@ -36,8 +37,7 @@ public final class APIConnector {
         self.validator = validator
         var eventMonitors = [EventMonitor]()
 #if DEBUG
-        //let logMonitor = APIClientMonitor(configuration: configuration, logger: APIClientLoggerImpl())
-        //eventMonitors.append(logMonitor)
+        eventMonitors.append(eventLogger)
 #endif
         self.session = Session(configuration: configuration.sessionConfiguration,
                                interceptor: interceptor,
@@ -45,12 +45,12 @@ public final class APIConnector {
     }
     
     /// 기본 APIClient 설정을 사용하는 Initializer
-    public convenience init() {
+    public convenience init(eventLogger: APIConnectorLogger & EventMonitor) {
         let configuration = APIConnectorConfig()
         let interceptor = APIClientInterceptorImpl()
         let validator = APIConnectorValidatorImpl()
         
-        self.init(configuration: configuration, interceptor: interceptor, validator: validator)
+        self.init(configuration: configuration, interceptor: interceptor, validator: validator, eventLogger: eventLogger)
     }
 }
 
@@ -66,7 +66,7 @@ extension APIConnector {
     }
     
     /// APIResource에 정의된 Additional Header 값과 APIClient에 정의된 Header값을 머지하는 함수
-    func makeRequestHeader(resource: any APIResource) -> HTTPHeaders? {
+    func makeRequestHeader(resource: APIResource) -> HTTPHeaders? {
         var headerForRequest: HTTPHeaders?
         
         if let additionalHeaders = resource.additionalHeaders {

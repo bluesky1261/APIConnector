@@ -10,7 +10,7 @@ import Combine
 import Alamofire
 
 extension DataResponsePublisher {
-    func value(_ resource: any APIResource,
+    func value(_ resource: APIResource,
                statusCode: Range<Int>) -> AnyPublisher<Value, Error> {
         return self
             .tryMap { (dataResponse: DataResponse<Value, AFError>) -> Value in
@@ -21,6 +21,8 @@ extension DataResponsePublisher {
                         throw APIConnectorError.unreached
                     } else if error.isResponseValidationError {
                         throw APIConnectorError.unAuthorized
+                    } else if error.isExplicitlyCancelledError {
+                        throw APIConnectorError.canceledByUser
                     }
                 }
                 

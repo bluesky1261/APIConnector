@@ -10,7 +10,7 @@ import Combine
 
 // MARK: - Request + Combine
 extension APIConnector {
-    public func request<Model, Parameters>(resource: any APIResource,
+    public func request<Model, Parameters>(resource: APIResource,
                                     model: Model.Type,
                                     parameters: Parameters,
                                     encoder: ParameterEncoder = JSONParameterEncoder.default) -> AnyPublisher<Model, Error> where Model: Decodable, Parameters: Encodable {
@@ -22,7 +22,7 @@ extension APIConnector {
         .eraseToAnyPublisher()
     }
     
-    public func request<Model>(resource: any APIResource,
+    public func request<Model>(resource: APIResource,
                         model: Model.Type,
                         encoder: ParameterEncoder = JSONParameterEncoder.default) -> AnyPublisher<Model, Error> where Model: Decodable {
         let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
@@ -37,7 +37,7 @@ extension APIConnector {
 
 // MARK: APIClient + publish
 extension APIConnector {
-    fileprivate func publish<Model, Parameters>(resource: any APIResource,
+    fileprivate func publish<Model, Parameters>(resource: APIResource,
                                                 model: Model.Type,
                                                 parameters: Parameters?,
                                                 encoder: ParameterEncoder = JSONParameterEncoder.default) -> DataResponsePublisher<Model> where Model: Decodable, Parameters: Encodable {
