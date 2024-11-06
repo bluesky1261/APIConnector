@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 
-public protocol APIConnectorLogger: AnyObject {
+public protocol APIConnectorLogger {
     func startLogging(_ logMessage: String, isError: Bool, file: String, function: String, line: UInt)
     func endLogging(_ logMessage: String, isError: Bool, file: String, function: String, line: UInt)
     func validationError(_ errorMessage: String)
