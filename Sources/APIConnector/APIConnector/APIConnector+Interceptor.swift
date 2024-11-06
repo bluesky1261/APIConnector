@@ -33,8 +33,8 @@ public protocol APIConnectorInterceptor: RequestInterceptor,
                                          APIConnectorInterceptorRetrier where APIRetryResult == Alamofire.RetryResult {}
 
 final class APIClientInterceptorImpl: APIConnectorInterceptor {
-    var retryLimit: Int = 3
-    var retryDelay: TimeInterval = 1.0
+    let retryLimit: Int = 3
+    let retryDelay: TimeInterval = 1.0
     
     // MARK: APIClientInterceptorAdaptor
     func adapt(_ urlRequest: URLRequest,

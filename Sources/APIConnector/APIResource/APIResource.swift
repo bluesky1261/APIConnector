@@ -8,11 +8,16 @@
 import Foundation
 import Alamofire
 
-public protocol APIResource {
+public typealias APIResource = APIBase & APIEndpoint
+
+public protocol APIBase {
     var baseURL: URL { get }
+    
+    func decodeError(data: Data) throws -> APIErrorDecodable
+}
+
+public protocol APIEndpoint {
     var endpoint: String { get }
     var httpMethod: HTTPMethod { get }
     var additionalHeaders: HTTPHeaders? { get }
-    
-    func decodeError(data: Data) throws -> APIErrorDecodable
 }
