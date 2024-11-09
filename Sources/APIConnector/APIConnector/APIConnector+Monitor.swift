@@ -4,9 +4,7 @@
 //
 //  Created by Joonghoo Im on 2022/07/02.
 //
-
 import Foundation
-import Alamofire
 
 public protocol ResponseTrackable {
     associatedtype Failure: Error

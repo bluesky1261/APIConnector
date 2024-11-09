@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Alamofire
 
 public final class APIConnector {
     private(set) public var session: Session
