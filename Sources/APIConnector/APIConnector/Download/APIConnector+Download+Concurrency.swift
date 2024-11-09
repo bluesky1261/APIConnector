@@ -5,8 +5,6 @@
 //  Created by Joonghoo Im on 2022/07/02.
 //
 
-import Foundation
-import Alamofire
 /*
 extension APIConnector {
     func download<Parameters>(resource: any APIResource,

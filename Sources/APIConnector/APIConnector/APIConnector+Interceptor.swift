@@ -5,7 +5,6 @@
 //  Created by Joonghoo Im on 2022/05/23.
 //
 
-import Alamofire
 import Foundation
 
 // MARK: - APIConnectorInterceptorAdaptor

@@ -4,9 +4,7 @@
 //
 //  Created by Joonghoo Im on 2023/03/04.
 //
-
 import Foundation
-import Alamofire
 
 public protocol APIConnectorConfigurable {
     /// URLSessionConfiguration

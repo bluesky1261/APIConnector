@@ -4,9 +4,7 @@
 //
 //  Created by Joonghoo Im on 2022/05/15.
 //
-
 import Foundation
-import Alamofire
 
 public typealias APIResource = APIBase & APIEndpoint
 
