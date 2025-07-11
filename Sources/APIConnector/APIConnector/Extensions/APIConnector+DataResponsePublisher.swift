@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import Alamofire
 
 extension DataResponsePublisher {
     func value(_ resource: APIResource,

@@ -4,8 +4,6 @@
 //
 //  Created by Joonghoo Im on 2023/03/04.
 //
-
-import Alamofire
 import Foundation
 
 public protocol APIConnectorValidator {

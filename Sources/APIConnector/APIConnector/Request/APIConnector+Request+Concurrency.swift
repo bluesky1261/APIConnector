@@ -6,14 +6,13 @@
 //
 
 import Foundation
-import Alamofire
 
 // MARK: - APIConnector + Request
 extension APIConnector {
     public func request<Model, Parameters>(resource: APIResource,
-                                    model: Model.Type,
-                                    parameters: Parameters,
-                                    encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable, Parameters: Encodable {
+                                           model: Model.Type,
+                                           parameters: Parameters,
+                                           encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable, Parameters: Encodable {
         return try await serializing(resource: resource,
                                      model: model,
                                      parameters: parameters,
@@ -22,11 +21,30 @@ extension APIConnector {
     }
     
     public func request<Model>(resource: APIResource,
-                        model: Model.Type,
-                        encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable {
+                               model: Model.Type,
+                               encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Model where Model: Decodable {
         let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
         return try await serializing(resource: resource,
                                      model: model,
+                                     parameters: parameters,
+                                     encoder: encoder)
+        .value(resource, statusCode: configuration.validStatusCode)
+    }
+    
+    public func requestData<Parameters>(resource: APIResource,
+                                        parameters: Parameters,
+                                        encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Data where Parameters: Encodable {
+        return try await serializing(resource: resource,
+                                     parameters: parameters,
+                                     encoder: encoder)
+        .value(resource, statusCode: configuration.validStatusCode)
+    }
+    
+    public func requestData(resource: APIResource,
+                            encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> Data {
+        let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
+        
+        return try await serializing(resource: resource,
                                      parameters: parameters,
                                      encoder: encoder)
         .value(resource, statusCode: configuration.validStatusCode)
@@ -39,21 +57,16 @@ extension APIConnector {
                                                     model: Model.Type,
                                                     parameters: Parameters?,
                                                     encoder: ParameterEncoder = JSONParameterEncoder.default) -> DataTask<Model> where Model: Decodable, Parameters: Encodable {
-        let fullURL = resource.baseURL.appendingPathComponent(resource.endpoint)
-        let headerForRequest = makeRequestHeader(resource: resource)
-        
-        var parameterEncoder = encoder
-        
-        if parameters != nil && resource.httpMethod == .get {
-            parameterEncoder = URLEncodedFormParameterEncoder.default
-        }
-        
-        return session.request(fullURL,
-                               method: resource.httpMethod,
-                               parameters: parameters,
-                               encoder: parameterEncoder,
-                               headers: headerForRequest)
-        .validate(retriableStatusCode: (configuration.retriableStatusCode), resource: resource, validator: self.validator)
-        .serializingDecodable()
+        return makeDataRequest(resource: resource, parameters: parameters, encoder: encoder)
+            .validate(retriableStatusCode: (configuration.retriableStatusCode), resource: resource, validator: self.validator)
+            .serializingDecodable()
+    }
+    
+    fileprivate func serializing<Parameters>(resource: APIResource,
+                                             parameters: Parameters?,
+                                             encoder: ParameterEncoder = JSONParameterEncoder.default) -> DataTask<Data> where Parameters: Encodable {
+        return makeDataRequest(resource: resource, parameters: parameters, encoder: encoder)
+            .validate(retriableStatusCode: (configuration.retriableStatusCode), resource: resource, validator: self.validator)
+            .serializingData()
     }
 }
