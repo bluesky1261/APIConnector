@@ -188,6 +188,21 @@ extension APIConnectorMonitor: EventMonitor {
     }
 }
 
+// MARK: - APIConnectorMonitor + APIConnectorLogger
+extension APIConnectorMonitor: APIConnectorLogger {
+    public func startLogging(_ logMessage: String, isError: Bool, file: String, function: String, line: UInt) {
+        logger?.startLogging(logMessage, isError: isError, file: file, function: function, line: line)
+    }
+    
+    public func endLogging(_ logMessage: String, isError: Bool, file: String, function: String, line: UInt) {
+        logger?.endLogging(logMessage, isError: isError, file: file, function: function, line: line)
+    }
+    
+    public func validationError(_ errorMessage: String) {
+        logger?.validationError(errorMessage)
+    }
+}
+
 // MARK: - Data+PrettyPrintedString
 fileprivate extension Data {
     var toPrettyPrintedString: String? {
