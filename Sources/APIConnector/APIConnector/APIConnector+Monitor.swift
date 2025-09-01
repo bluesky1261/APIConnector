@@ -27,12 +27,15 @@ extension DownloadResponse: ResponseTrackable {
     }
 }
 
-final class APIConnectorMonitor {
+open class APIConnectorMonitor: @unchecked Sendable {
     private var duration: [UUID: TimeInterval] = [:]
     private let configuration: APIConnectorConfigurable
     private let logger: APIConnectorLogger?
     
-    init(configuration: APIConnectorConfigurable, logger: APIConnectorLogger? = nil) {
+    init(
+        configuration: APIConnectorConfigurable = APIConnectorConfig(),
+        logger: APIConnectorLogger? = nil
+    ) {
         self.configuration = configuration
         self.logger = logger
     }
@@ -111,52 +114,52 @@ final class APIConnectorMonitor {
 // MARK: - EventMonitor
 extension APIConnectorMonitor: EventMonitor {
     // MARK: Request & Download Start
-    func request(_ request: Request,
+    public func request(_ request: Request,
                  didResumeTask task: URLSessionTask) {
         startLogging(request)
     }
     
     // MARK: DataRequest
-    func request<Value>(_ request: DataRequest,
+    public func request<Value>(_ request: DataRequest,
                         didParseResponse response: DataResponse<Value, AFError>) {
         endLogging(request, response: response)
     }
     
-    func request(_ request: DataRequest,
+    public func request(_ request: DataRequest,
                  didParseResponse response: DataResponse<Data?, AFError>) {
         endLogging(request, response: response)
     }
     
     // MARK: DownloadRequest
-    func request(_ request: DownloadRequest,
+    public func request(_ request: DownloadRequest,
                  didParseResponse response: DownloadResponse<URL?, AFError>) {
         endLogging(request, response: response)
     }
     
-    func request<Value>(_ request: DownloadRequest,
+    public func request<Value>(_ request: DownloadRequest,
                         didParseResponse response: DownloadResponse<Value, AFError>) {
         endLogging(request, response: response)
     }
     
-    func request(_ request: Request,
+    public func request(_ request: Request,
                  didFailToCreateURLRequestWithError error: AFError) {
         endLogging(request)
     }
     
-    func request(_ request: Request,
+    public func request(_ request: Request,
                  didFailTask task: URLSessionTask,
                  earlyWithError error: AFError) {
         endLogging(request)
     }
     
-    func request(_ request: Request,
+    public func request(_ request: Request,
                  didFailToAdaptURLRequest initialRequest: URLRequest,
                  withError error: AFError) {
         endLogging(request)
     }
     
     // MARK: Validation
-    func request(_ request: DataRequest,
+    public func request(_ request: DataRequest,
                  didValidateRequest urlRequest: URLRequest?,
                  response: HTTPURLResponse,
                  data: Data?,
@@ -170,7 +173,7 @@ extension APIConnectorMonitor: EventMonitor {
         }
     }
     
-    func request(_ request: DownloadRequest,
+    public func request(_ request: DownloadRequest,
                  didValidateRequest urlRequest: URLRequest?,
                  response: HTTPURLResponse,
                  fileURL: URL?,
