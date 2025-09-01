@@ -33,10 +33,17 @@ open class APIConnectorMonitor: @unchecked Sendable {
     private let logger: APIConnectorLogger?
     
     init(
-        configuration: APIConnectorConfigurable = APIConnectorConfig(),
+        configuration: APIConnectorConfigurable,
         logger: APIConnectorLogger? = nil
     ) {
         self.configuration = configuration
+        self.logger = logger
+    }
+    
+    public init(
+        logger: APIConnectorLogger? = nil
+    ) {
+        self.configuration = APIConnectorConfig()
         self.logger = logger
     }
     
