@@ -14,6 +14,7 @@ public protocol APIErrorDecodable: Error & Decodable {
 // MARK: - APIConnectorError
 public enum APIConnectorError: Error {
     case http(APIErrorDecodable, HTTPURLResponse)
+    case download(HTTPURLResponse)
     case decode(Swift.DecodingError?)
     case noData
     case emptyUrl
@@ -32,6 +33,8 @@ extension APIConnectorError: LocalizedError {
         switch self {
         case let .http(responseError, response):
             return "서버 통신시 에러가 발생하였습니다.\n응답코드: \(response.statusCode)\n메세지: \(responseError.errorMessage ?? "")"
+        case let .download(response):
+            return "파일 다운로드시 에러가 발생하였습니다.\n응답코드: \(response.statusCode)"
         case let .decode(decodingError):
             switch decodingError {
             case let .typeMismatch(type, context):

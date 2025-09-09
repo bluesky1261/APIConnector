@@ -19,6 +19,11 @@ public protocol APIConnectorValidator {
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int
+    
+    func validate<S: Sequence>(retriableStatusCode: S,
+                               request: URLRequest?,
+                               response: HTTPURLResponse,
+                               fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int
 }
 
 // MARK: - APIClientValidatorImpl
@@ -52,6 +57,20 @@ final class APIConnectorValidatorImpl: APIConnectorValidator {
             return .success(())
         }
     }
+    
+    func validate<S: Sequence>(retriableStatusCode: S,
+                               request: URLRequest?,
+                               response: HTTPURLResponse,
+                               fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int {
+        // 재시도가 필요한 응답 코드일 때
+        if retriableStatusCode.contains(response.statusCode) {
+            // RequestRetrier가 작동할 수 있게 실패를 반환한다
+            let reason: AFError.ResponseValidationFailureReason = .unacceptableStatusCode(code: response.statusCode)
+            return .failure(AFError.responseValidationFailed(reason: reason))
+        } else {
+            return .success(())
+        }
+    }
 }
 
 // MARK: - DataRequest
@@ -72,6 +91,13 @@ extension DownloadRequest {
                                validator: APIConnectorValidator) -> Self where S.Iterator.Element == Int {
         validate { request, response, fileUrl in
             validator.validate(retriableStatusCode: retriableStatusCode, resource: resource, request: request, response: response, fileUrl: fileUrl)
+        }
+    }
+    
+    func validate<S: Sequence>(retriableStatusCode: S,
+                               validator: APIConnectorValidator) -> Self where S.Iterator.Element == Int {
+        validate { request, response, fileUrl in
+            validator.validate(retriableStatusCode: retriableStatusCode, request: request, response: response, fileUrl: fileUrl)
         }
     }
 }

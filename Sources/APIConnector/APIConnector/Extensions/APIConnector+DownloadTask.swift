@@ -67,4 +67,46 @@ extension DownloadTask {
             return try await value
         }
     }
+    
+    func value(statusCode: Range<Int>) async throws -> Value {
+        let dataResponse = await response
+        
+        if let error = dataResponse.error {
+            if error.isSessionTaskError,
+               case .sessionTaskFailed(let sessionError) = error,
+               (sessionError as NSError).code == NSURLErrorTimedOut {
+                throw APIConnectorError.unreached
+            } else if error.isResponseValidationError {
+                throw APIConnectorError.unAuthorized
+            } else if error.isExplicitlyCancelledError {
+                throw APIConnectorError.canceledByUser
+            }
+        }
+        
+        // HTTPURLResponse 검증
+        guard let urlResponse = dataResponse.response else {
+            if let error = dataResponse.error {
+                throw APIConnectorError.urlResponse(error)
+            } else {
+                throw APIConnectorError.urlResponse(nil)
+            }
+        }
+        
+        /// HTTP Status 유효한 상태 코드 에러 처리
+        guard statusCode.contains(urlResponse.statusCode) else {
+            /// 데이터 검증 - HTTP Code가 정상 응답이 아닌 경우만 체크. 정상인 경우에 응답값이 없을 수 있기 때문
+            guard let data = dataResponse.data else { throw APIConnectorError.noData }
+            throw APIConnectorError.download(urlResponse)
+        }
+        
+        /// HTTP 응답 정상 - 데이터 디코딩 에러 처리
+        if let error = dataResponse.error,
+           case let AFError.responseSerializationFailed(reason: reason) = error,
+           case let AFError.ResponseSerializationFailureReason.decodingFailed(error: decodingFailedError) = reason,
+           let decodingError = decodingFailedError as? Swift.DecodingError {
+            throw APIConnectorError.decode(decodingError)
+        } else {
+            return try await value
+        }
+    }
 }
