@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 extension APIConnector {
-    func download<Parameters>(resource: any APIResource,
+    public func download<Parameters>(resource: any APIResource,
                               to destination: DownloadRequest.Destination? = nil,
                               parameters: Parameters,
                               encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> URL where Parameters: Encodable {
@@ -20,7 +20,7 @@ extension APIConnector {
         .value(resource, statusCode: configuration.validStatusCode)
     }
     
-    func download(resource: APIResource,
+    public func download(resource: APIResource,
                   to destination: DownloadRequest.Destination? = nil,
                   encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> URL {
         let parameters = resource.httpMethod == .get ? nil : EmptyParameters()
