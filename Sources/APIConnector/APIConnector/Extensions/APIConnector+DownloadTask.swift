@@ -1,12 +1,13 @@
 //
-//  APIConnector+DataTask.swift
-//  
+//  File.swift
+//  APIConnector
 //
-//  Created by Joonghoo Im on 2023/03/04.
+//  Created by john.f on 9/9/25.
 //
+
 import Foundation
 
-extension DataTask {
+extension DownloadTask {
     func value(_ resource: APIResource,
                statusCode: Range<Int>) async throws -> Value {
         let dataResponse = await response
