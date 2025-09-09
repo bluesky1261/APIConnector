@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 extension APIConnector {
-    public func donwload<Parameters>(remoteUrl: URL,
+    public func download<Parameters>(remoteUrl: URL,
                                      headers: HTTPHeaders? = nil,
                                      to destination: DownloadRequest.Destination? = nil,
                                      parameters: Parameters,
