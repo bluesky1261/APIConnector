@@ -13,7 +13,20 @@ extension APIConnector {
                                      headers: HTTPHeaders? = nil,
                                      to destination: DownloadRequest.Destination? = nil,
                                      parameters: Parameters,
-                                     encoder: ParameterEncoder = JSONParameterEncoder.default) async throws -> URL where Parameters: Encodable {
+                                     encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default) async throws -> URL where Parameters: Encodable {
+        return try await serializingDownload(remoteUrl: remoteUrl,
+                                             headers: headers,
+                                             destination: destination,
+                                             parameters: parameters,
+                                             encoder: encoder)
+        .value(statusCode: configuration.validStatusCode)
+    }
+    
+    public func download(remoteUrl: URL,
+                         headers: HTTPHeaders? = nil,
+                         to destination: DownloadRequest.Destination? = nil,
+                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default) async throws -> URL {
+        let parameters = EmptyParameters()
         return try await serializingDownload(remoteUrl: remoteUrl,
                                              headers: headers,
                                              destination: destination,
