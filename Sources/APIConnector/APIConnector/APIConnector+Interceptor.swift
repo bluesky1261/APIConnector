@@ -31,12 +31,14 @@ public protocol APIConnectorInterceptor: RequestInterceptor,
                                          APIConnectorInterceptorAdaptor,
                                          APIConnectorInterceptorRetrier where APIRetryResult == Alamofire.RetryResult {}
 
-final class APIClientInterceptorImpl: APIConnectorInterceptor {
-    let retryLimit: Int = 3
-    let retryDelay: TimeInterval = 1.0
+public final class APIClientInterceptorImpl: APIConnectorInterceptor {
+    public let retryLimit: Int = 3
+    public let retryDelay: TimeInterval = 1.0
+    
+    public init() { }
     
     // MARK: APIClientInterceptorAdaptor
-    func adapt(_ urlRequest: URLRequest,
+    public func adapt(_ urlRequest: URLRequest,
                completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
         
@@ -48,7 +50,7 @@ final class APIClientInterceptorImpl: APIConnectorInterceptor {
     }
     
     // MARK: APIClientInterceptorRetrier
-    func retry(_ urlResponse: HTTPURLResponse,
+    public func retry(_ urlResponse: HTTPURLResponse,
                retryCount: Int,
                dueTo error: Error,
                completion: @escaping (APIRetryResult) -> Void) {
@@ -69,14 +71,14 @@ final class APIClientInterceptorImpl: APIConnectorInterceptor {
     }
     
     // MARK: Alamofire.RequestAdapter
-    func adapt(_ urlRequest: URLRequest,
+    public func adapt(_ urlRequest: URLRequest,
                for session: Session,
                completion: @escaping (Result<URLRequest, Error>) -> Void) {
         adapt(urlRequest, completion: completion)
     }
     
     // MARK: Alamofire.RequestRetrier
-    func retry(_ request: Request,
+    public func retry(_ request: Request,
                for session: Session,
                dueTo error: Error,
                completion: @escaping (RetryResult) -> Void) {
