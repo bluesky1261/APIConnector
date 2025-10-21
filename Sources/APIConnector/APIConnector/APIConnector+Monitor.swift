@@ -32,7 +32,7 @@ open class APIConnectorMonitor: @unchecked Sendable {
     private let configuration: APIConnectorConfigurable
     private let logger: APIConnectorLogger?
     
-    init(
+    public init(
         configuration: APIConnectorConfigurable = APIConnectorConfig(),
         logger: APIConnectorLogger? = nil
     ) {

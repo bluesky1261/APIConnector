@@ -27,8 +27,10 @@ public protocol APIConnectorValidator {
 }
 
 // MARK: - APIClientValidatorImpl
-final class APIConnectorValidatorImpl: APIConnectorValidator {
-    func validate<S: Sequence>(retriableStatusCode: S,
+public final class APIConnectorValidatorImpl: APIConnectorValidator {
+    public init() { }
+    
+    public func validate<S: Sequence>(retriableStatusCode: S,
                                resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
@@ -43,7 +45,7 @@ final class APIConnectorValidatorImpl: APIConnectorValidator {
         }
     }
     
-    func validate<S: Sequence>(retriableStatusCode: S,
+    public func validate<S: Sequence>(retriableStatusCode: S,
                                resource: APIResource,
                                request: URLRequest?,
                                response: HTTPURLResponse,
@@ -58,7 +60,7 @@ final class APIConnectorValidatorImpl: APIConnectorValidator {
         }
     }
     
-    func validate<S: Sequence>(retriableStatusCode: S,
+    public func validate<S: Sequence>(retriableStatusCode: S,
                                request: URLRequest?,
                                response: HTTPURLResponse,
                                fileUrl: URL?) -> DataRequest.ValidationResult where S.Iterator.Element == Int {
