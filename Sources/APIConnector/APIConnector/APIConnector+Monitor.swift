@@ -89,8 +89,10 @@ open class APIConnectorMonitor: @unchecked Sendable {
         requestLog += "Response Headers: \(request.httpHeaders)\n"
         
         if let data = response?.data {
-            requestLog += "Raw Data: \(data)\n"
-            requestLog += "JSON Data: \(data.toPrettyPrintedString)"
+            requestLog += "Raw Data: \(data.count) bytes\n"
+            if let prettyJSON = data.toPrettyPrintedString {
+                requestLog += "JSON Data:\n\(prettyJSON)"
+            }
         }
         
         if let fileURL = response?.fileURL {
