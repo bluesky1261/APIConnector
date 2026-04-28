@@ -40,6 +40,13 @@ open class APIConnectorMonitor: @unchecked Sendable {
         self.logger = logger
     }
     
+    public init(
+        logger: APIConnectorLogger? = nil
+    ) {
+        self.configuration = APIConnectorConfig()
+        self.logger = logger
+    }
+    
     private func startLogging(_ request: Request) {
         duration[request.id] = Date().timeIntervalSince1970
         
