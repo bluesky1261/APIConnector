@@ -31,8 +31,8 @@ extension APIConnector {
     /// queryItems가 nil인 경우 기존 appendingPathComponent 동작을 그대로 유지하고,
     /// queryItems가 있는 경우에만 URLComponents 기반으로 URL을 구성하여 쿼리 파라미터를 안전하게 추가합니다.
     internal static func makeFullURL(base: URL, endpoint: String, queryItems: [URLQueryItem]?) -> URL {
-        // queryItems가 있는 경우: URLComponents로 URL 구성
-        if let queryItems, !queryItems.isEmpty {
+        // queryItems가 nil이 아닌 경우: URLComponents로 URL 구성 (빈 배열도 포함)
+        if let queryItems {
             var components = URLComponents()
             components.scheme = base.scheme
             components.host = base.host
@@ -53,7 +53,9 @@ extension APIConnector {
             }
             components.percentEncodedPath = fullPath
 
-            components.queryItems = queryItems
+            if !queryItems.isEmpty {
+                components.queryItems = queryItems
+            }
 
             if let url = components.url {
                 return url
