@@ -34,8 +34,11 @@ public protocol APIConnectorInterceptor: RequestInterceptor,
 public final class APIClientInterceptorImpl: APIConnectorInterceptor {
     public let retryLimit: Int = 3
     public let retryDelay: TimeInterval = 1.0
+    public let activateRetry: Bool
     
-    public init() { }
+    public init(activateRetry: Bool = false) {
+        self.activateRetry = activateRetry
+    }
     
     // MARK: APIClientInterceptorAdaptor
     public func adapt(_ urlRequest: URLRequest,
@@ -54,7 +57,12 @@ public final class APIClientInterceptorImpl: APIConnectorInterceptor {
                retryCount: Int,
                dueTo error: Error,
                completion: @escaping (APIRetryResult) -> Void) {
-        completion(.doNotRetry)
+        if activateRetry, retryCount < retryLimit {
+            completion(.retryWithDelay(retryDelay))
+        } else {
+            completion(.doNotRetry)
+        }
+        
         //    if retryCount < retryLimit, urlResponse.statusCode == 401 {
         //      Task {
         //        // Retry 로직 수행
@@ -82,13 +90,19 @@ public final class APIClientInterceptorImpl: APIConnectorInterceptor {
                for session: Session,
                dueTo error: Error,
                completion: @escaping (RetryResult) -> Void) {
-        guard let urlResponse = request.task?.response as? HTTPURLResponse else {
-            completion(.doNotRetry)
+        let retryCount = request.retryCount
+        
+        guard let urlResponse = request.response else {
+            if activateRetry, retryCount < retryLimit {
+                completion(.retryWithDelay(retryDelay))
+            } else {
+                completion(.doNotRetry)
+            }
             return
         }
         
         retry(urlResponse,
-              retryCount: request.retryCount,
+              retryCount: retryCount,
               dueTo: error,
               completion: completion)
     }
