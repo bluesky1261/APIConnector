@@ -57,7 +57,7 @@ public final class APIClientInterceptorImpl: APIConnectorInterceptor {
                retryCount: Int,
                dueTo error: Error,
                completion: @escaping (APIRetryResult) -> Void) {
-        if activateRetry {
+        if activateRetry, retryCount < retryLimit {
             completion(.retryWithDelay(retryDelay))
         } else {
             completion(.doNotRetry)
@@ -90,8 +90,10 @@ public final class APIClientInterceptorImpl: APIConnectorInterceptor {
                for session: Session,
                dueTo error: Error,
                completion: @escaping (RetryResult) -> Void) {
+        let retryCount = request.retryCount
+        
         guard let urlResponse = request.response else {
-            if activateRetry {
+            if activateRetry, retryCount < retryLimit {
                 completion(.retryWithDelay(retryDelay))
             } else {
                 completion(.doNotRetry)
@@ -100,7 +102,7 @@ public final class APIClientInterceptorImpl: APIConnectorInterceptor {
         }
         
         retry(urlResponse,
-              retryCount: request.retryCount,
+              retryCount: retryCount,
               dueTo: error,
               completion: completion)
     }
